@@ -1,47 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AnyChat - Global Chat</title>
+
+  <title>AnyChat - Chat Room</title>
   <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
 <body>
-  <h2>🌐 AnyChat Global Chat</h2>
-  <p>You are chatting as: <strong>{{ nickname }}</strong></p>
+  <h2 style="text-align: center;">🌐 AnyChat Global Chat</h2>
+  <h3 style="text-align: center;" id="timer">5:00</h3>
+  <p style="text-align: center;">You are chatting as: <strong>{{ nickname }}</strong></p>
 
-  <ul id="messages"></ul>
+  <!-- WRAP THE CHAT IN .chat-wrapper -->
+  <div class="chat-wrapper">
+    <div class="chat-container">
+      <ul id="messages"></ul>
 
-  <input id="msg" placeholder="Type a message...">
-  <button onclick="sendMessage()">Send</button>
+      <!-- keep using .input-container to match CSS -->
+      <div class="input-container">
+        <input id="msg" type="text" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+</body>
 
-  <script>
-    const nickname = "{{ nickname }}";  // passed from Flask
-    const socket = io();
+<script>
+  const nickname = "{{ nickname }}";  // passed from Flask
+  const socket = io();
 
-      socket.on("connect", () => {
-      console.log("✅ Connected!");
-      socket.emit("join", { nickname });
-    });
-    
-    socket.on("message", (data) => {
-      let li = document.createElement("li");
+  socket.on("connect", () => {
+    console.log("✅ Connected!");
+    socket.emit("join", { nickname });
+  });
+
+  // handle incoming messages
+  socket.on("message", (data) => {
+    console.log("📩 Incoming:", data);
+
+    const messages = document.getElementById("messages");
+    const atBottom = messages.scrollTop + messages.clientHeight >= messages.scrollHeight - 10;
+
+    let li = document.createElement("li");
+
+    // ensure we handle both {nickname, text} and plain strings (fallback)
+    if (typeof data === "string") {
       li.textContent = data;
-      document.getElementById("messages").appendChild(li);
-    });
+      li.classList.add("message", "other");
+    } else {
+      li.textContent = data.text;
 
-    function sendMessage() {
-      let msg = document.getElementById("msg").value;
-      if (msg.trim() !== "") {
-        socket.send("[" + nickname + "]: " + msg);
-        document.getElementById("msg").value = "";
+      if (data.nickname === nickname) {
+        li.classList.add("message", "you");   // your message → right
+      } else {
+        li.classList.add("message", "other"); // other → left
       }
     }
 
-    // allow Enter key to send
-    document.getElementById("msg").addEventListener("keyup", function(event) {
-      if (event.key === "Enter") {
-        sendMessage();
+    messages.appendChild(li);
+
+    // keep scroll at bottom only if user was already at bottom
+    if (atBottom) {
+      messages.scrollTop = messages.scrollHeight;
+    }
+  });
+
+  // send message
+  function sendMessage() {
+    let msg = document.getElementById("msg").value;
+    if (msg.trim() !== "") {
+      socket.emit("message", { nickname, text: msg });
+      document.getElementById("msg").value = "";
+    }
+  }
+
+  // start countdown
+  function timer() {
+    let time = 300;
+    let timerElement = document.getElementById("timer");
+    const countdown = setInterval(() => {
+      let minutes = Math.floor(time / 60);
+      let seconds = time % 60;
+
+      if (seconds < 10) seconds = "0" + seconds;
+      if (minutes < 10) minutes = "0" + minutes;
+
+      timerElement.textContent = `${minutes}:${seconds}`;
+
+      time--;
+      if (time < 0) {
+        clearInterval(countdown);
+        timerElement.textContent = "Time's up!";
       }
-    });
-  </script>
-</body>
+    }, 1000);
+  }
+
+  // allow Enter key to send
+  document.getElementById("msg").addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+  });
+
+  // start chat
+  socket.on("chat_started", (data) => {
+    console.log("⏳ Chat started!", data);
+    timer();
+  });
+</script>
+
+
 </html>

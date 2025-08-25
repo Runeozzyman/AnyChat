@@ -1,0 +1,102 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Center the chat box horizontally */
+.chat-wrapper {
+  display: flex;
+  justify-content: center; /* centers horizontally */
+  width: 100%;             /* full width of page */
+  margin-top: 20px;        /* spacing from header */
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  width: 400px;            /* fixed chat width */
+  height: 500px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  margin: 0 auto;          /* ensure center if wrapper is missing */
+}
+
+/* Timer (your h3 outside still uses this id, that's fine) */
+#timer {
+  text-align: center;
+  margin: 10px 0;
+  font-weight: 600;
+}
+
+/* Messages section */
+#messages {
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Bubbles */
+.message {
+  max-width: 60%;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 15px;
+  word-wrap: break-word;
+  font-size: 15px;
+}
+
+.message.you {
+  align-self: flex-end;
+  background-color: #4f8cff;
+  color: white;
+  border-bottom-right-radius: 5px;
+}
+
+.message.other {
+  align-self: flex-start;
+  background-color: #e5e5ea;
+  color: black;
+  border-bottom-left-radius: 5px;
+}
+
+/* Input box — use the class that your HTML has */
+.input-container {
+  display: flex;
+  padding: 10px;
+  background-color: white;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+#msg {
+  flex-grow: 1;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+}
+
+button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #4f8cff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #3a6edc;
+}
+

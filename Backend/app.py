@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_socketio import SocketIO, join_room, leave_room, send
+from datetime import datetime
 import uuid
 
 #TODO------------------------------------------------------------
@@ -15,6 +16,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # Store waiting users and room mappings
 waiting_users = []   # queue [(sid, nickname)]
 user_rooms = {}      # sid -> room
+nicknames = {}      # sid -> nickname
 
 @app.route('/')
 def landing():
@@ -52,13 +54,19 @@ def handle_join(data):
         # notify both
         send(f"✅ You are now chatting with {other_nick}", to=sid)
         send(f"✅ You are now chatting with {nickname}", to=other_sid)
+        
+        socketio.emit("chat_started", {"room": room_id}, room=room_id)
 
 @socketio.on("message")
-def handle_message(msg):
+def handle_message(data):
     sid = request.sid
-    room = user_rooms.get(sid)
-    if room:
-        send(msg, to=room)
+    room_id = user_rooms.get(sid)
+
+    if room_id:
+        # Relay the message to everyone in the room (both users)
+        socketio.emit("message", data, room=room_id)
+
+
 
 @socketio.on("disconnect")
 def handle_disconnect():
