@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 
 </head>
 <body>
@@ -22,13 +23,15 @@
       <ul id="messages"></ul>
 
       <!-- keep using .input-container to match CSS -->
-      <div class="input-container">
-        <input id="msg" type="text" placeholder="Type a message..." />
-        <button onclick="sendMessage()">Send</button>
-      </div>
-    </div>
-  </div>
-</body>
+   <div class="input-container">
+  <input id="msg" type="text" placeholder="Type a message..." />
+  <button onclick="sendMessage()">Send</button>
+  <button id="emojiBtn">😊</button>
+  
+  <!-- move picker inside container -->
+  <emoji-picker id="emojiPicker" style="display:none;"></emoji-picker>
+</div>
+
 
 <script>
   const nickname = "{{ nickname }}";  // passed from Flask
@@ -112,6 +115,23 @@
     console.log("⏳ Chat started!", data);
     timer();
   });
+
+  const emojiBtn = document.getElementById("emojiBtn");
+const emojiPicker = document.getElementById("emojiPicker");
+const msgInput = document.getElementById("msg");
+
+// toggle picker visibility
+emojiBtn.addEventListener("click", () => {
+  emojiPicker.style.display = (emojiPicker.style.display === "none") ? "block" : "none";
+});
+
+// insert emoji into text input
+emojiPicker.addEventListener("emoji-click", (event) => {
+  msgInput.value += event.detail.unicode;
+  emojiPicker.style.display = "none"; // auto-hide
+});
+
+
 </script>
 
 
