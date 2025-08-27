@@ -1,0 +1,60 @@
+body {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 40px;
+}
+
+h1, h3 {
+  margin: 10px 0;
+}
+
+.description-box {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: left;
+}
+
+.join-box{
+max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: left;
+
+}
+
+.join-form {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.join-form input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 200px;
+  font-size: 15px;
+}
+
+.join-form button {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #4f8cff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.join-form button:hover {
+  background-color: #3a6edc;
+}
