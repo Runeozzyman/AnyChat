@@ -21,7 +21,7 @@ body {
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px purple;
   overflow: hidden;
   margin: 0 auto;          /* ensure center if wrapper is missing */
 }
