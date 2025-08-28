@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AnyChat - Chat Room</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <link rel="stylesheet" href="chat.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+</head>
+<body>
+  <h2 style="text-align: center;">🌐 AnyChat Global Chat</h2>
+  <h3 style="text-align: center;" id="timer">5:00</h3>
+  <p style="text-align: center;">You are chatting as: <strong id="nicknameDisplay"></strong></p>
+
+  <div class="chat-wrapper">
+    <div class="chat-container">
+      <ul id="messages"></ul>
+
+      <div class="input-container">
+        <input id="msg" type="text" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+        <button id="emojiBtn">😊</button>
+        <emoji-picker id="emojiPicker" style="display:none;"></emoji-picker>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Grab nickname from URL query string
+    const urlParams = new URLSearchParams(window.location.search);
+    const nickname = urlParams.get('nickname') || 'Anon';
+    document.getElementById('nicknameDisplay').textContent = nickname;
+
+    const socket = io();
+
+    socket.on('connect', () => {
+      console.log("✅ Connected!");
+      socket.emit('join', { nickname });
+    });
+
+    socket.on('message', (data) => {
+      const messages = document.getElementById('messages');
+      const atBottom = messages.scrollTop + messages.clientHeight >= messages.scrollHeight - 10;
+
+      let li = document.createElement('li');
+
+      if (typeof data === 'string') {
+        li.textContent = data;
+        li.classList.add('message', 'other');
+      } else {
+        li.textContent = data.text;
+        li.classList.add('message', data.nickname === nickname ? 'you' : 'other');
+      }
+
+      messages.appendChild(li);
+
+      if (atBottom) {
+        messages.scrollTop = messages.scrollHeight;
+      }
+    });
+
+    function sendMessage() {
+      const msg = document.getElementById('msg').value;
+      if (msg.trim() !== '') {
+        socket.emit('message', { nickname, text: msg });
+        document.getElementById('msg').value = '';
+      }
+    }
+
+    function timer() {
+      let time = 300;
+      const timerElement = document.getElementById('timer');
+      const countdown = setInterval(() => {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+        if (seconds < 10) seconds = "0" + seconds;
+        if (minutes < 10) minutes = "0" + minutes;
+        timerElement.textContent = `${minutes}:${seconds}`;
+        time--;
+        if (time < 0) {
+          clearInterval(countdown);
+          timerElement.textContent = "Time's up!";
+        }
+      }, 1000);
+    }
+
+    document.getElementById('msg').addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') sendMessage();
+    });
+
+    socket.on('chat_started', () => {
+      console.log("⏳ Chat started!");
+      timer();
+    });
+
+    // Emoji picker
+    const emojiBtn = document.getElementById('emojiBtn');
+    const emojiPicker = document.getElementById('emojiPicker');
+    const msgInput = document.getElementById('msg');
+
+    emojiBtn.addEventListener('click', () => {
+      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
+
+    emojiPicker.addEventListener('emoji-click', (event) => {
+      msgInput.value += event.detail.unicode;
+      emojiPicker.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
