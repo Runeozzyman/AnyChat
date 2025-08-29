@@ -13,3 +13,7 @@ Given that I have prior experience with Flask, I decided to overhaul my backend 
 **2)** The architecture of Node.JS also supports multiple concurrent connections, leading to greater efficiency and scalability
 
 **3)** I haven't used Node.JS before!
+
+## Updates
+
+As of now, AnyChat is still under development and is yet to be hosted, but as soon as I am able to I will update this readme with a live link so you can try AnyChat for yourself :)
