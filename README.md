@@ -16,4 +16,4 @@ Given that I have prior experience with Flask, I decided to overhaul my backend 
 
 ## Updates
 
-As of now, AnyChat is still under development and is yet to be hosted, but as soon as I am able to I will update this readme with a live link so you can try AnyChat for yourself :)
+As of now, AnyChat is still under development and is yet to be hosted, but as soon as I am able to I will update this readme with a live link so you can try AnyChat for yourself!
